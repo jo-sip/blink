@@ -1,16 +1,24 @@
 #!/bin/sh
 # Builds build/Blink.app.
 #   --install   also copies it to /Applications and relaunches
+#   UNIVERSAL=1 scripts/build-app.sh   builds for both Apple Silicon and Intel
 #   --release   signs with your Developer ID (hardened runtime), zips it, and notarises it if a
 #               notarytool profile named "blink" exists (see README). Needs a "Developer ID Application" certificate.
 set -e
 cd "$(dirname "$0")/.."
 VERSION="$(cat VERSION 2>/dev/null || echo 0.1.0)"
-swift build -c release
+# UNIVERSAL=1 builds one app for both Apple Silicon and Intel Macs (the release workflow does this).
+if [ -n "$UNIVERSAL" ]; then
+    swift build -c release --arch arm64 --arch x86_64
+    BIN="$(swift build -c release --arch arm64 --arch x86_64 --show-bin-path)/Blink"
+else
+    swift build -c release
+    BIN=.build/release/Blink
+fi
 APP=build/Blink.app
 rm -rf "$APP"
 mkdir -p "$APP/Contents/MacOS" "$APP/Contents/Resources"
-cp .build/release/Blink "$APP/Contents/MacOS/Blink"
+cp "$BIN" "$APP/Contents/MacOS/Blink"
 cp Resources/AppIcon.icns "$APP/Contents/Resources/AppIcon.icns"
 cat > "$APP/Contents/Info.plist" <<'PLIST'
 <?xml version="1.0" encoding="UTF-8"?>

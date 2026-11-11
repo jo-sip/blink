@@ -70,7 +70,41 @@ in a ~3 MB native app with no account, no subscription and no network calls of i
 
 ## Install
 
-Blink isn't on the App Store, so you build it yourself. It takes about a minute.
+### The easy way: one line, no Xcode
+
+Open **Terminal** (⌘Space, type "Terminal") and paste:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/jo-sip/blink/main/scripts/install.sh | sh
+```
+
+That's it. Blink appears in your menu bar (⚡) and opens with <kbd>⌘</kbd><kbd>Space</kbd>. Run the same line again any
+time to update. The [script](scripts/install.sh) is short and worth a read: it downloads the latest
+[release](https://github.com/jo-sip/blink/releases/latest), checks it, moves it to Applications and opens it.
+
+Works on macOS 13 or later, on Apple Silicon and Intel Macs.
+
+<details>
+<summary>Prefer to download it yourself?</summary>
+
+1. Download **Blink.zip** from the [latest release](https://github.com/jo-sip/blink/releases/latest) and unzip it.
+2. Drag **Blink** into **Applications** and open it.
+3. macOS will say it can't check the app for malicious software, because Blink isn't signed with a paid Apple
+   developer certificate. Click **Done**, then open **System Settings → Privacy & Security**, scroll down and click
+   **Open Anyway** next to Blink. You only do this once.
+</details>
+
+<details>
+<summary>Build it from source</summary>
+
+You don't need Xcode, only Apple's free command-line tools (a much smaller download). If you've never installed
+them, run this once:
+
+```bash
+xcode-select --install
+```
+
+Then:
 
 ```bash
 git clone https://github.com/jo-sip/blink.git
@@ -78,13 +112,16 @@ cd blink
 scripts/build-app.sh --install
 ```
 
-This needs **macOS 13 or later** and Xcode or its command-line tools (`xcode-select --install`). Xcode 26 or later
-gives you the Liquid Glass look; older versions build with the frosted style. The app is copied to `/Applications`
-and starts at login (turn that off in Settings → General).
+Use Xcode 26 or later (or its command-line tools) for the Liquid Glass look; older versions build with the frosted style.
+</details>
 
-**⌘Space is Spotlight's by default.** To give it to Blink, open System Settings → Keyboard → Keyboard Shortcuts →
-Spotlight and untick *Show Spotlight search*. Or choose another hotkey in Blink's Settings. Until you do, the ⚡ menu
-bar icon shows a warning triangle.
+### Make ⌘Space open Blink
+
+<kbd>⌘</kbd><kbd>Space</kbd> belongs to Spotlight until you free it up: open **System Settings → Keyboard → Keyboard
+Shortcuts → Spotlight** and untick **Show Spotlight search**. Or pick a different shortcut in Blink's Settings
+(<kbd>⌘</kbd><kbd>,</kbd>). Until you do, the ⚡ in the menu bar shows a warning triangle.
+
+Blink starts at login. You can turn that off in Settings → General.
 
 ### Permissions
 
@@ -96,6 +133,18 @@ macOS asks for each one the first time a feature needs it. Everything else works
 | Contacts | Showing names and photos instead of phone numbers |
 | Automation → Messages | Sending your replies through the Messages app |
 | Accessibility | Pasting clipboard history straight into the app you're in |
+
+<details>
+<summary>Uninstall</summary>
+
+Quit Blink from the ⚡ menu, delete it from Applications, and optionally remove its settings and data:
+
+```bash
+rm -rf ~/.config/blink ~/Library/Application\ Support/Blink ~/Library/Logs/Blink.log
+```
+
+Then remove Blink from System Settings → Privacy & Security wherever you granted it access.
+</details>
 
 ## Using Blink
 
@@ -150,8 +199,11 @@ keystrokes. You see the last few messages and whether your reply was delivered, 
 place.
 
 **Over Spotlight,** Blink is built for speed rather than searching everything. Results appear as you type, without
-the list jumping around, and the apps you use most rise to the top. You also get things Spotlight doesn't do: clipboard
-history, pins, codes that jump straight into a search, an action menu on every row, and plugins.
+the list jumping around, and the apps you use most rise to the top. Searching the web is part of the list rather than
+a hidden <kbd>⌘</kbd><kbd>B</kbd>: "Search Google for …" is always there for whatever you typed, `g cats` searches
+Google, `c cats` searches in Chrome, and you can add YouTube, GitHub or any site with a search URL. You also get things
+Spotlight doesn't do: clipboard history, pins, codes that jump straight into a search, an action menu on every row, and
+plugins.
 
 **Over Alfred,** you get the features Alfred charges for in its Powerpack (clipboard history, workflows, custom web
 searches, contacts), free and open source, plus the Messages integration Alfred doesn't have. You don't have to give up
@@ -197,11 +249,19 @@ Spotlight is probably still using it (the menu bar icon shows a warning triangle
 </details>
 
 <details>
-<summary><b>Why isn't there a download?</b></summary>
+<summary><b>Why does macOS warn about a downloaded Blink.zip?</b></summary>
 
-Apps downloaded from the internet need to be signed and notarised with a paid Apple Developer ID, or macOS blocks
-them. Building from source avoids that, because the app was made on your own Mac. The release script is ready for when
-a signed build exists (`scripts/build-app.sh --release`).
+Apple asks app makers to sign and "notarise" apps with a paid Developer ID before macOS opens them without a warning.
+Blink is a free hobby project and isn't signed that way yet. The one-line installer avoids the warning, because files
+fetched with `curl` aren't marked as downloaded from the internet. If you download the zip in a browser, use
+**Open Anyway** once (see [Install](#install)). The code is all here if you'd like to check it, or build it yourself.
+</details>
+
+<details>
+<summary><b>Does Blink update itself?</b></summary>
+
+Not yet. Run the install line again to update. Your settings, pins and clipboard history are kept. After an update
+macOS may ask for some permissions again.
 </details>
 
 ## Development
