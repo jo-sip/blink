@@ -38,9 +38,10 @@ fi
 ditto -x -k "$TMP/Blink.zip" "$TMP/unzipped"
 [ -d "$TMP/unzipped/Blink.app" ] || fail "The download didn't contain Blink.app."
 
-if pgrep -x Blink >/dev/null 2>&1; then
+# Quit the copy we're about to replace (not a Blink running from anywhere else).
+if pgrep -f "$DEST/Blink.app/Contents/MacOS/Blink" >/dev/null 2>&1; then
     say "Quitting the running Blink…"
-    pkill -x Blink || true
+    pkill -f "$DEST/Blink.app/Contents/MacOS/Blink" || true
     sleep 1
 fi
 
